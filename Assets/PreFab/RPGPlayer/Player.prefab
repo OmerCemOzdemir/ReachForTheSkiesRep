@@ -295,6 +295,11 @@ MonoBehaviour:
   interactText: {fileID: 0}
   upgradePanel: {fileID: 0}
   repairPanel: {fileID: 0}
+  itemCraterPanel: {fileID: 0}
+  pauseMenuPanel: {fileID: 0}
+  repairOutlineMat: {fileID: 2100000, guid: 83ae274535683b54392c99b165ffd33c, type: 2}
+  upgradeOutlineMat: {fileID: 2100000, guid: 545c59e98f1220a459528569ffe518d8, type: 2}
+  craftOutlineMat: {fileID: 2100000, guid: ea81558cc3f2ad54ca075938162bf5df, type: 2}
 --- !u!1 &8953584416729851978
 GameObject:
   m_ObjectHideFlags: 0

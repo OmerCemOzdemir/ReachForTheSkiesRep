@@ -13,7 +13,7 @@ public class UpgradeStation : MonoBehaviour
     [SerializeField] private float timeToStart;
 
     [SerializeField] private TextMeshProUGUI textForCountdown;
-
+    [SerializeField] private Material material;
     float timeElapsed;
 
 
@@ -34,6 +34,7 @@ public class UpgradeStation : MonoBehaviour
 
     private void WaitUpgradeStation()
     {
+        
         textForCountdown.gameObject.SetActive(true);
         GetComponentInChildren<ParticleSystem>().Stop();
         StartCoroutine(UpgradeStationDelay(timeToStay));
@@ -45,6 +46,8 @@ public class UpgradeStation : MonoBehaviour
     private void EndUpgradeStation()
     {
         textForCountdown.gameObject.SetActive(false);
+        material.SetColor("_OutlineColor", new Color(0, 0, 0));
+        material.SetColor("_OutlineColor2", new Color(0, 0, 0));
         GetComponentInChildren<ParticleSystem>().Play();
 
         GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.3f);
@@ -61,6 +64,8 @@ public class UpgradeStation : MonoBehaviour
         while (wait > 0)
         {
             textForCountdown.text = "" + wait;
+            material.SetColor("_OutlineColor", new Color(0.1569983f, 1, 0));
+            material.SetColor("_OutlineColor2", new Color(0, 0.7353768f, 1));
             GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1f);
             GetComponent<BoxCollider2D>().enabled = true;
             //Debug.Log("Time remaining: " + wait);

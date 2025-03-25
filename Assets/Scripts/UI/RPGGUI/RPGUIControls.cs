@@ -17,6 +17,8 @@ public class RPGUIControls : MonoBehaviour
         repairPanel.SetActive(false);
         itemCraterPanel.SetActive(false);
         ToolTipSystem.HideToolTip();
+        PlayerRPGUIControls.randomEnemyEncounter = false;
+
     }
 
     private void Start()

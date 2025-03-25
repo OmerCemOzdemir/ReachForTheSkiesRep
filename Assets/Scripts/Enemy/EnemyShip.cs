@@ -18,6 +18,7 @@ public class EnemyShip : MonoBehaviour
     //public static event Action onEnemyDeath;
 
     private float damageTaken;
+    private bool enemyAttack = true;
     public float GetEnemyDamage()
     {
         return baseDamage;
@@ -42,7 +43,10 @@ public class EnemyShip : MonoBehaviour
     {
         while (true)
         {
-            EnemyAttack();
+            if (enemyAttack)
+            {
+                EnemyAttack();
+            }
             yield return new WaitForSeconds(fireRate);
         }
     }
@@ -81,12 +85,14 @@ public class EnemyShip : MonoBehaviour
         {
             StartCoroutine(EnemyTakeDamageEffect());
             //EnemyDeath();
-            StopCoroutine(EnemyAttackSquence(2f));
+            //StopCoroutine(EnemyAttackSquence(2f));
+            enemyAttack = false;
             StartCoroutine(DelayOnEnemyDeath(GetComponentInChildren<ParticleSystem>().main.duration));
         }
         //Debug.Log("Enemy:\n damage taken:" + damageTaken + " Current Health: " + baseHealth);
 
     }
+
     IEnumerator EnemyTakeDamageEffect()
     {
         GetComponent<SpriteRenderer>().color = Color.red;
@@ -97,8 +103,6 @@ public class EnemyShip : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         GetComponent<SpriteRenderer>().color = Color.white;
     }
-
-
 
     IEnumerator DelayOnEnemyDeath(float wait)
     {

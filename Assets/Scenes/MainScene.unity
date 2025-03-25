@@ -660,7 +660,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 52fb072d3222270459183459a4bc9fc8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -776,6 +776,7 @@ MonoBehaviour:
   timeToRepeat: 30
   timeToStart: 3
   textForCountdown: {fileID: 1836517937}
+  material: {fileID: 2100000, guid: 52fb072d3222270459183459a4bc9fc8, type: 2}
 --- !u!1 &180565147
 GameObject:
   m_ObjectHideFlags: 0
@@ -22082,7 +22083,7 @@ MonoBehaviour:
   - 50
   - 150
   - 250
-  debugStageInterval: 0
+  debugStageInterval: 150
 --- !u!1 &1472174263
 GameObject:
   m_ObjectHideFlags: 0

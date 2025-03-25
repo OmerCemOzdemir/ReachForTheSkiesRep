@@ -211,8 +211,9 @@ public class PlayerShipController : MonoBehaviour
 
     IEnumerator PlayerTakeDamageEffect()
     {
-
-        GetComponent<BoxCollider2D>().enabled = false;
+        GetComponent<BoxCollider2D>().excludeLayers = LayerMask.GetMask("Enemy");
+        //Physics.IgnoreLayerCollision(7, 8, true);
+        //GetComponent<BoxCollider2D>().enabled = false;
         GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0.5f);
         yield return new WaitForSeconds(0.1f);
         GetComponent<SpriteRenderer>().color = Color.white;
@@ -228,7 +229,9 @@ public class PlayerShipController : MonoBehaviour
         GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0.5f);
         yield return new WaitForSeconds(0.1f);
         GetComponent<SpriteRenderer>().color = Color.white;
-        GetComponent<BoxCollider2D>().enabled = true;
+        //GetComponent<BoxCollider2D>().enabled = true;
+        //Physics.IgnoreLayerCollision(7, 8, false);
+        GetComponent<BoxCollider2D>().excludeLayers = LayerMask.GetMask("Nothing");
 
     }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.EventSystems.EventTrigger;
@@ -11,6 +12,11 @@ public class PlayerRPGUIControls : MonoBehaviour
     [SerializeField] private GameObject repairPanel;
     [SerializeField] private GameObject itemCraterPanel;
     [SerializeField] private GameObject pauseMenuPanel;
+
+    [SerializeField] private Material repairOutlineMat;
+    [SerializeField] private Material upgradeOutlineMat;
+    [SerializeField] private Material craftOutlineMat;
+
 
 
     private PlayerInput inputActionUI;
@@ -54,31 +60,27 @@ public class PlayerRPGUIControls : MonoBehaviour
 
     }
 
-
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Upgrade"))
         {
-
             stationType = "Upgrade";
             interactText.SetActive(true);
-
+            ChangeUpgradeMat();
         }
 
         if (collision.CompareTag("Repair"))
         {
-
             stationType = "Repair";
             interactText.SetActive(true);
-
+            ChangeRepairMat();
         }
 
         if (collision.CompareTag("ItemCrafter"))
         {
             stationType = "ItemCrafter";
             interactText.SetActive(true);
-
+            ChangeCraftMat();
         }
 
 
@@ -107,21 +109,21 @@ public class PlayerRPGUIControls : MonoBehaviour
         {
             stationType = "None";
             interactText.SetActive(false);
-
+            ChangeMatNormal();
         }
 
         if (collision.CompareTag("Repair"))
         {
             stationType = "None";
             interactText.SetActive(false);
-
+            ChangeMatNormal();
         }
 
         if (collision.CompareTag("ItemCrafter"))
         {
             stationType = "None";
             interactText.SetActive(false);
-
+            ChangeMatNormal();
         }
 
         if (collision.CompareTag("LootChest"))
@@ -143,6 +145,35 @@ public class PlayerRPGUIControls : MonoBehaviour
     }
 
 
+    private void ChangeRepairMat()
+    {
+        
+        repairOutlineMat.SetColor("_OutlineColor", new Color(0.1569983f, 1, 0));
+        repairOutlineMat.SetColor("_OutlineColor2", new Color(0, 0.7353768f, 1));
+    }
+    private void ChangeUpgradeMat()
+    {
+        //Debug.Log("mat changed");
+        upgradeOutlineMat.SetColor("_OutlineColor", new Color(0.1569983f, 1, 0));
+        upgradeOutlineMat.SetColor("_OutlineColor2", new Color(0, 0.7353768f, 1));
+    }
+    private void ChangeCraftMat()
+    {
+        craftOutlineMat.SetColor("_OutlineColor", new Color(0.1569983f, 1, 0));
+        craftOutlineMat.SetColor("_OutlineColor2", new Color(0, 0.7353768f, 1));
+    }
+
+    private void ChangeMatNormal()
+    {
+        repairOutlineMat.SetColor("_OutlineColor", new Color(0, 0, 0));
+        repairOutlineMat.SetColor("_OutlineColor2", new Color(0, 0, 0));
+        upgradeOutlineMat.SetColor("_OutlineColor", new Color(0, 0, 0));
+        upgradeOutlineMat.SetColor("_OutlineColor2", new Color(0, 0, 0));
+        craftOutlineMat.SetColor("_OutlineColor", new Color(0, 0, 0));
+        craftOutlineMat.SetColor("_OutlineColor2", new Color(0, 0, 0));
+    }
+
+
     IEnumerator RandomEnemyCycle(GameObject enemy)
     {
         while (true)
@@ -161,16 +192,20 @@ public class PlayerRPGUIControls : MonoBehaviour
     {
         //playerInteracted = true;
         interactText.SetActive(false);
+        
         switch (stationType)
         {
             case "Upgrade":
                 upgradePanel.SetActive(true);
+                randomEnemyEncounter = true;
                 break;
             case "Repair":
                 repairPanel.SetActive(true);
+                randomEnemyEncounter = true;
                 break;
             case "ItemCrafter":
                 itemCraterPanel.SetActive(true);
+                randomEnemyEncounter = true;
                 break;
             case "LootChest":
                 //int[] temp = { 1, 0, 2, 0, 4, 0 };
