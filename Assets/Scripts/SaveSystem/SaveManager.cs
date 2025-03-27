@@ -27,7 +27,7 @@ public class SaveManager : ScriptableObject
 
         string json = JsonUtility.ToJson(SaveData.instance, true);
         File.WriteAllText(Application.dataPath + "/SaveData.json", json);
-        Debug.Log("Game Saved");
+       // Debug.Log("Game Saved");
 
     }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class ShipGameManager : MonoBehaviour
@@ -12,7 +13,6 @@ public class ShipGameManager : MonoBehaviour
 
     private int gameLevel;
 
-    private int currentStage = 0;
     public static event Action onStageClear;
     public static event Action onBossEncounter;
     bool onetime0 = true;
@@ -66,8 +66,8 @@ public class ShipGameManager : MonoBehaviour
         {
             if (onetime1)
             {
-                //UnityEngine.Debug.Log("In Second Stage ");
                 onStageClear?.Invoke();
+                //UnityEngine.Debug.Log("In Second Stage ");
                 onetime1 = false;
                 SaveData.instance.gameShipStageTimer = stageInterval[1];
 
@@ -87,24 +87,11 @@ public class ShipGameManager : MonoBehaviour
 
     }
 
-    private void StageClear()
+    private IEnumerator DelayStagePlay()
     {
-        currentStage++;
-        //UnityEngine.Debug.Log("Stage Clear " + currentStage);
-    }
 
+        yield return new WaitForSeconds(5f);
 
-
-
-
-    private void OnEnable()
-    {
-        onStageClear += StageClear;
-    }
-
-    private void OnDisable()
-    {
-        onStageClear -= StageClear;
     }
 
 }

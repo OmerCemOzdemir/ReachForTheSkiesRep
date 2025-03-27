@@ -87,7 +87,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &8059702405989415644
+--- !u!1 &6520577215245920147
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -95,44 +95,37 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8493965877238387762}
-  - component: {fileID: 7505255857087083894}
-  - component: {fileID: 4020697849599427947}
-  - component: {fileID: 8845117891534866606}
-  - component: {fileID: 3846285897212116287}
-  - component: {fileID: 7208384945752130045}
-  - component: {fileID: 3207371397101324832}
+  - component: {fileID: 5460204363989755335}
+  - component: {fileID: 5304076951434505143}
   m_Layer: 0
-  m_Name: Player
-  m_TagString: Player
+  m_Name: Colider
+  m_TagString: PlayerCircle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8493965877238387762
+--- !u!4 &5460204363989755335
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8059702405989415644}
+  m_GameObject: {fileID: 6520577215245920147}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -5}
+  m_LocalPosition: {x: 0, y: -0.483, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 8891521540694715133}
-  - {fileID: 1492432527160896077}
-  m_Father: {fileID: 0}
+  m_Children: []
+  m_Father: {fileID: 8493965877238387762}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!58 &7505255857087083894
+--- !u!58 &5304076951434505143
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8059702405989415644}
+  m_GameObject: {fileID: 6520577215245920147}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -160,8 +153,47 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.5}
+  m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!1 &8059702405989415644
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8493965877238387762}
+  - component: {fileID: 4020697849599427947}
+  - component: {fileID: 8845117891534866606}
+  - component: {fileID: 3846285897212116287}
+  - component: {fileID: 7208384945752130045}
+  - component: {fileID: 3207371397101324832}
+  m_Layer: 0
+  m_Name: Player
+  m_TagString: Player
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8493965877238387762
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8059702405989415644}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8891521540694715133}
+  - {fileID: 1492432527160896077}
+  - {fileID: 5460204363989755335}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &4020697849599427947
 Rigidbody2D:
   serializedVersion: 5

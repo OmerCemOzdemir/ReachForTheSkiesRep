@@ -34,7 +34,7 @@ public class BossShip : MonoBehaviour
     {
         totalbossHealth = bossHealth;
         //InvokeRepeating(nameof(ShootBullets), enemyProjectileStartTime, enemyProjectileRepeatTime);
-        StartCoroutine(BossAttackSquence(enemyProjectileRepeatTime));
+       
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -75,6 +75,12 @@ public class BossShip : MonoBehaviour
 
         }
     }
+
+    public void StartBossSquence()
+    {
+        StartCoroutine(BossAttackSquence(enemyProjectileRepeatTime));
+    }
+
 
     private void ShootBullets()
     {

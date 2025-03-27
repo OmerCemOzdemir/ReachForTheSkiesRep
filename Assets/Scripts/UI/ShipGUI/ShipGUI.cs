@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using Unity.VisualScripting;
@@ -19,9 +20,11 @@ public class ShipGUI : MonoBehaviour
     [SerializeField] private GameObject settingsPanel;
 
 
-
-
     private int currentStage = 0;
+    private Vector3 stageTextPosition;
+    public static event Action onNewStageStart;
+    public static event Action onGameStart;
+
 
     private void Update()
     {
@@ -33,7 +36,8 @@ public class ShipGUI : MonoBehaviour
     {
         //UpdatePlayerHealthBar();
         playerHealthBar.fillAmount = SaveData.instance.playerShipHealth / SaveData.instance.playerShipTotalHealth;
-
+        stageTextPosition = stageText.transform.position;
+        StartCoroutine(FirstStageLerp());
     }
 
     public void OpenSettings()
@@ -57,19 +61,45 @@ public class ShipGUI : MonoBehaviour
         Application.Quit();
     }
 
+    private void UpdateStageTextPosition()
+    {
+        StartCoroutine(StartStageLerp());
+    }
+
+    IEnumerator FirstStageLerp()
+    {
+        stageText.gameObject.GetComponent<LerpObject>().LerpObjectToPoint();
+        yield return new WaitForSeconds(3f);
+        stageText.gameObject.GetComponent<LerpObject>().LerpObjectToPoint2();
+        yield return new WaitForSeconds(7f);
+        onGameStart?.Invoke();
+    }
+
+
+    IEnumerator StartStageLerp()
+    {
+        EnemySpawner.endEnemySpawn = true;
+        stageText.gameObject.GetComponent<LerpObject>().LerpObjectToPoint();
+        yield return new WaitForSeconds(3f);
+        stageText.gameObject.GetComponent<LerpObject>().LerpObjectToPoint2();
+        yield return new WaitForSeconds(7f);
+        EnemySpawner.endEnemySpawn = false;
+        onNewStageStart?.Invoke();
+    }
+
     private void UpdateStageText()
     {
         currentStage++;
         switch (currentStage)
         {
             case 0:
-                stageText.text = "Stage: " + currentStage;
+                stageText.text = "Stage I";
                 break;
             case 1:
-                stageText.text = "Stage: " + currentStage;
+                stageText.text = "Stage II";
                 break;
             case 2:
-                stageText.text = "Stage: " + currentStage;
+                stageText.text = "Stage III";
                 break;
         }
         //Debug.Log("Current Stage: " + currentStage);
@@ -115,6 +145,8 @@ public class ShipGUI : MonoBehaviour
         PlayerShipController.OnPlayerTakeDamage += UpdatePlayerHealthBar;
         PlayerShipController.OnPlayerRespawn += ActivateGameOverSequence;
         ShipGameManager.onStageClear += UpdateStageText;
+        ShipGameManager.onStageClear += UpdateStageTextPosition;
+
     }
 
     private void OnDisable()
@@ -122,7 +154,7 @@ public class ShipGUI : MonoBehaviour
         PlayerShipController.OnPlayerTakeDamage -= UpdatePlayerHealthBar;
         PlayerShipController.OnPlayerRespawn -= ActivateGameOverSequence;
         ShipGameManager.onStageClear -= UpdateStageText;
-
+        ShipGameManager.onStageClear -= UpdateStageTextPosition;
     }
 
 }

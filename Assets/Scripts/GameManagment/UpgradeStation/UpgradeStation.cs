@@ -13,12 +13,16 @@ public class UpgradeStation : MonoBehaviour
     [SerializeField] private float timeToStart;
 
     [SerializeField] private TextMeshProUGUI textForCountdown;
-    [SerializeField] private Material material;
+    [SerializeField] private GameObject getInTextArrow;
+    [SerializeField] private Material upgradeShipOutlineMat;
+    private LoaderManager loaderManager;
+
     float timeElapsed;
 
 
     private void Start()
     {
+        loaderManager = FindAnyObjectByType<LoaderManager>();
         //InvokeRepeating(nameof(MoveUpgradeStationRandom), timeToStart, timeToRepeat);
         InvokeRepeating(nameof(MoveUpgradeStationRandom), timeToStart, timeToRepeat);
         //MoveUpgradeStationRandom();
@@ -34,8 +38,9 @@ public class UpgradeStation : MonoBehaviour
 
     private void WaitUpgradeStation()
     {
-        
-        textForCountdown.gameObject.SetActive(true);
+
+        //textForCountdown.gameObject.SetActive(true);
+        getInTextArrow.SetActive(true);
         GetComponentInChildren<ParticleSystem>().Stop();
         StartCoroutine(UpgradeStationDelay(timeToStay));
         Invoke("EndUpgradeStation", timeToStay);
@@ -45,9 +50,10 @@ public class UpgradeStation : MonoBehaviour
 
     private void EndUpgradeStation()
     {
-        textForCountdown.gameObject.SetActive(false);
-        material.SetColor("_OutlineColor", new Color(0, 0, 0));
-        material.SetColor("_OutlineColor2", new Color(0, 0, 0));
+        getInTextArrow.SetActive(false);
+        //textForCountdown.gameObject.SetActive(false);
+        upgradeShipOutlineMat.SetColor("_OutlineColor", new Color(0, 0, 0));
+        upgradeShipOutlineMat.SetColor("_OutlineColor2", new Color(0, 0, 0));
         GetComponentInChildren<ParticleSystem>().Play();
 
         GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.3f);
@@ -64,8 +70,8 @@ public class UpgradeStation : MonoBehaviour
         while (wait > 0)
         {
             textForCountdown.text = "" + wait;
-            material.SetColor("_OutlineColor", new Color(0.1569983f, 1, 0));
-            material.SetColor("_OutlineColor2", new Color(0, 0.7353768f, 1));
+            upgradeShipOutlineMat.SetColor("_OutlineColor", new Color(0.1569983f, 1, 0));
+            upgradeShipOutlineMat.SetColor("_OutlineColor2", new Color(0, 0.7353768f, 1));
             GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1f);
             GetComponent<BoxCollider2D>().enabled = true;
             //Debug.Log("Time remaining: " + wait);
@@ -124,9 +130,10 @@ public class UpgradeStation : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            SaveManager.saveManager_Instance.SaveGame();
-            SceneManager.LoadScene(2);
-
+            upgradeShipOutlineMat.SetColor("_OutlineColor", new Color(0, 0, 0));
+            upgradeShipOutlineMat.SetColor("_OutlineColor2", new Color(0, 0, 0));
+            //SceneManager.LoadScene(2);
+            loaderManager.LoadNextLevel(2);
         }
     }
 
@@ -140,6 +147,14 @@ public class UpgradeStation : MonoBehaviour
         ShipGameManager.onBossEncounter -= StopUpgradeShipSquence;
 
     }
+
+    private void OnApplicationQuit()
+    {
+        upgradeShipOutlineMat.SetColor("_OutlineColor", new Color(0, 0, 0));
+        upgradeShipOutlineMat.SetColor("_OutlineColor2", new Color(0, 0, 0));
+    }
+
+
 }
 /*
  

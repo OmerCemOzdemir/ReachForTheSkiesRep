@@ -49,7 +49,7 @@ public class RPGPauseMenuUI : MonoBehaviour
         playerHealthBar.fillAmount = SaveData.instance.playerRPGHealth / RPGFightManagerCopy.GetTotalPlayerHealth();
         UpdateMaterialText();
         UpdateTexts();
-        Debug.Log("Player Stats are updated: " + SaveData.instance.playerRPGHealth + " / " + RPGFightManagerCopy.GetTotalPlayerHealth());
+       // Debug.Log("Player Stats are updated: " + SaveData.instance.playerRPGHealth + " / " + RPGFightManagerCopy.GetTotalPlayerHealth());
     }
 
     public void UpdateMaterialText()

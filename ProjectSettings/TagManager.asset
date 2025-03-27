@@ -15,6 +15,7 @@ TagManager:
   - EnemyProjectile
   - LootChest
   - Material
+  - PlayerCircle
   layers:
   - Default
   - TransparentFX
@@ -27,7 +28,7 @@ TagManager:
   - Enemy
   - UpgradeStation
   - Barriers
-  - 
+  - Door
   - 
   - 
   - 

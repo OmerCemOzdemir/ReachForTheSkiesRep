@@ -8,8 +8,13 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private GameObject continueButton;
     private bool askPlayerForConfirmation;
     [SerializeField] private GameObject confirmPanel;
+    private LoaderManager loaderManager;
+
+
     private void Start()
     {
+        loaderManager = FindAnyObjectByType<LoaderManager>();
+
         SaveManager.saveManager_Instance.LoadGame();
 
         if (SaveData.instance.newGame)
@@ -59,8 +64,9 @@ public class MainMenuUI : MonoBehaviour
             SaveData.instance.gameMusicVolume = 0;
             SaveData.instance.gameSFXVolume = 0;
 
-            SaveManager.saveManager_Instance.SaveGame();
-            SceneManager.LoadScene(1);
+            // SaveManager.saveManager_Instance.SaveGame();
+            // SceneManager.LoadScene(1);
+            loaderManager.LoadNextLevel(1);
         }
 
     }
@@ -80,8 +86,10 @@ public class MainMenuUI : MonoBehaviour
 
     public void ContinueGame()
     {
-        SaveManager.saveManager_Instance.LoadGame();
-        SceneManager.LoadScene(1);
+        //SaveManager.saveManager_Instance.LoadGame();
+        //SceneManager.LoadScene(1);
+        loaderManager.LoadNextLevel(1);
+
     }
 
 

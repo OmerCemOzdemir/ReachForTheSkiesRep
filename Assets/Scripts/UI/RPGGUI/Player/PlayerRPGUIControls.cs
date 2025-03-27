@@ -108,28 +108,40 @@ public class PlayerRPGUIControls : MonoBehaviour
         if (collision.CompareTag("Upgrade"))
         {
             stationType = "None";
-            interactText.SetActive(false);
+            if (interactText != null)
+            {
+                interactText.SetActive(false);
+            }
             ChangeMatNormal();
         }
 
         if (collision.CompareTag("Repair"))
         {
             stationType = "None";
-            interactText.SetActive(false);
+            if (interactText != null)
+            {
+                interactText.SetActive(false);
+            }
             ChangeMatNormal();
         }
 
         if (collision.CompareTag("ItemCrafter"))
         {
             stationType = "None";
-            interactText.SetActive(false);
+            if (interactText != null)
+            {
+                interactText.SetActive(false);
+            }
             ChangeMatNormal();
         }
 
         if (collision.CompareTag("LootChest"))
         {
             stationType = "None";
-            interactText.SetActive(false);
+            if (interactText != null)
+            {
+                interactText.SetActive(false);
+            }
 
         }
 
@@ -147,7 +159,7 @@ public class PlayerRPGUIControls : MonoBehaviour
 
     private void ChangeRepairMat()
     {
-        
+
         repairOutlineMat.SetColor("_OutlineColor", new Color(0.1569983f, 1, 0));
         repairOutlineMat.SetColor("_OutlineColor2", new Color(0, 0.7353768f, 1));
     }
@@ -192,7 +204,7 @@ public class PlayerRPGUIControls : MonoBehaviour
     {
         //playerInteracted = true;
         interactText.SetActive(false);
-        
+
         switch (stationType)
         {
             case "Upgrade":
@@ -250,6 +262,12 @@ public class PlayerRPGUIControls : MonoBehaviour
             onRandomEncounter?.Invoke(false, health, dmg);
         }
 
+    }
+
+
+    private void OnApplicationQuit()
+    {
+        ChangeMatNormal();
     }
 
 

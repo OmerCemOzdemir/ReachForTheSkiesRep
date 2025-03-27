@@ -36,13 +36,14 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private AudioSource shipDestroyedSFX;
 
     private int currentStage = 0;
+    public static bool endEnemySpawn = false;
 
     private void SetNewStage()
     {
-        StopAllCoroutines();
+        //StopAllCoroutines();
         enemySpawnRate = enemySpawnRate / enemySpawnRateMultiplier;
         currentStage++;
-        Debug.Log("Stage Clear " + currentStage + " enemySpawnRate: " + enemySpawnRate);
+        //Debug.Log("Stage Clear " + currentStage + " enemySpawnRate: " + enemySpawnRate);
         StartCoroutine(EnemySpawnerRoutine(enemySpawnRate));
 
     }
@@ -52,6 +53,9 @@ public class EnemySpawner : MonoBehaviour
     {
         StopAllCoroutines();
         enemyBoss.SetActive(true);
+        enemyBoss.GetComponent<LerpObject>().LerpObjectToPoint();
+        enemyBoss.GetComponent<BossShip>().StartBossSquence();
+
     }
 
 
@@ -112,29 +116,39 @@ public class EnemySpawner : MonoBehaviour
         {
             RandomSpawnEnemy();
             // Debug.Log("Cycling... " + Time.time);
+            if (endEnemySpawn)
+            {
+                break;
+            }
             yield return new WaitForSeconds(enemySpawnRate);
         }
     }
 
-
+    private void StartGame()
+    {
+        StartCoroutine(EnemySpawnerRoutine(enemySpawnRate));
+    }
 
     private void Start()
     {
-        StartCoroutine(EnemySpawnerRoutine(enemySpawnRate));
+        //StartCoroutine(EnemySpawnerRoutine(enemySpawnRate));
         //InvokeRepeating(nameof(RandomSpawnEnemy), enemySpawnRate, enemySpawnTime);
     }
 
     private void OnEnable()
     {
-        ShipGameManager.onStageClear += SetNewStage;
+        ShipGUI.onNewStageStart += SetNewStage;
         ShipGameManager.onBossEncounter += SpawnBoss;
+        ShipGUI.onGameStart += StartGame;
+
     }
 
     private void OnDisable()
     {
-        ShipGameManager.onStageClear -= SetNewStage;
-        ShipGameManager.onBossEncounter -= SpawnBoss;
+        ShipGUI.onNewStageStart -= SetNewStage;
+        ShipGUI.onGameStart -= StartGame;
 
+        ShipGameManager.onBossEncounter -= SpawnBoss;
 
     }
 

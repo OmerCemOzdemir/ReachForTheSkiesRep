@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 public class PlayerShipController : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class PlayerShipController : MonoBehaviour
 
     [Header("Player Stats: ")]
     [SerializeField] private float playerMoveSpeed;
-    [SerializeField] private Transform playerProjectileSpawn;
+    [SerializeField] private Transform[] playerProjectileSpawn;
     [SerializeField] private float playerProjectileSpeed;
     [SerializeField] private float playerProjectileLifetime;
     [SerializeField] private GameObject playerProjectile;
@@ -25,7 +26,7 @@ public class PlayerShipController : MonoBehaviour
     private bool toggleAttack = true;
     private bool playerInvulnerability = false;
     private bool multipleProjectile = false;
-
+    private bool toggleProjectilePosition;
     [SerializeField] private float playerHealth;
     [SerializeField] private float playerDamage;
     private float totalPlayerHealth;
@@ -52,7 +53,7 @@ public class PlayerShipController : MonoBehaviour
 
 
     private float damageTaken;
-
+    private Transform currentProjectilePosition;
     public float GetPlayerHealth()
     {
         return totalPlayerHealth;
@@ -132,6 +133,11 @@ public class PlayerShipController : MonoBehaviour
 
     }
 
+    private void Start()
+    {
+        currentProjectilePosition = playerProjectileSpawn[0];
+    }
+
     private void Move()
     {
         movementDirection = move.ReadValue<Vector2>();
@@ -158,11 +164,24 @@ public class PlayerShipController : MonoBehaviour
 
     private void ShootProjectile()
     {
+        if (toggleProjectilePosition)
+        {
+            currentProjectilePosition = playerProjectileSpawn[0];
+            toggleProjectilePosition = false;
+        }
+        else
+        {
+            currentProjectilePosition = playerProjectileSpawn[1];
+            toggleProjectilePosition = true;
+
+        }
+
+
         if (multipleProjectile)
         {
-            GameObject newProjectile1 = Instantiate(playerProjectile, playerProjectileSpawn.position, Quaternion.identity);
-            GameObject newProjectile2 = Instantiate(playerProjectile, playerProjectileSpawn.position, Quaternion.Euler(0, 0, 30));
-            GameObject newProjectile3 = Instantiate(playerProjectile, playerProjectileSpawn.position, Quaternion.Euler(0, 0, -30));
+            GameObject newProjectile1 = Instantiate(playerProjectile, playerProjectileSpawn[2].position, Quaternion.identity);
+            GameObject newProjectile2 = Instantiate(playerProjectile, playerProjectileSpawn[0].position, Quaternion.Euler(0, 0, 30));
+            GameObject newProjectile3 = Instantiate(playerProjectile, playerProjectileSpawn[1].position, Quaternion.Euler(0, 0, -30));
 
 
             float angleOffset = 30f; // Angle in degrees
@@ -183,7 +202,7 @@ public class PlayerShipController : MonoBehaviour
         else
         {
             //Debug.Log("fire");
-            GameObject newProjectile = Instantiate(playerProjectile, playerProjectileSpawn.position, Quaternion.identity);
+            GameObject newProjectile = Instantiate(playerProjectile, currentProjectilePosition.position, Quaternion.identity);
             newProjectile.GetComponent<Rigidbody2D>().AddForce(transform.up * playerProjectileSpeed, ForceMode2D.Impulse);
             newProjectile.GetComponent<PlayerProjectile>().SetPlayerDamage(playerDamage);
 
