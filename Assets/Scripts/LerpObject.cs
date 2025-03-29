@@ -4,25 +4,14 @@ using UnityEngine;
 public class LerpObject : MonoBehaviour
 {
     [SerializeField] public float lerpSpeed;
-    private float timePassed;
-    private float timeComplete;
     private Vector3 endVector;
     private Vector3 startVector;
     private Vector3 endVector2;
-
-    private Vector3 storeStartVector;
-    private Vector3 storeEndVector;
-    private bool active = false;
-
-    [HideInInspector] public bool startLerp = false;
-    [HideInInspector] public bool stopLerp = false;
 
     private void Start()
     {
         startVector = transform.position;
         endVector = transform.GetChild(0).position;
-        storeStartVector = startVector;
-        storeEndVector = endVector;
         endVector2 = transform.GetChild(1).position;
     }
 
@@ -30,7 +19,7 @@ public class LerpObject : MonoBehaviour
     public void LerpObjectToPoint()
     {
         StartCoroutine(LerpObjectCoroutine(startVector, endVector, lerpSpeed));
-
+        //Debug.Log("LerpStarted");
     }
 
     public void LerpObjectToPoint2()

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using UnityEngine;
 
 public class ShipGameManager : MonoBehaviour
@@ -84,13 +83,6 @@ public class ShipGameManager : MonoBehaviour
 
             }
         }
-
-    }
-
-    private IEnumerator DelayStagePlay()
-    {
-
-        yield return new WaitForSeconds(5f);
 
     }
 

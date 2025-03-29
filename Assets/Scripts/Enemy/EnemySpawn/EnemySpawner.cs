@@ -34,7 +34,7 @@ public class EnemySpawner : MonoBehaviour
     [Header("Misc:  ")]
     [SerializeField] private ShipGameManager shipGameManager;
     [SerializeField] private AudioSource shipDestroyedSFX;
-
+    [SerializeField] private Animator bossAnimator;
     private int currentStage = 0;
     public static bool endEnemySpawn = false;
 
@@ -48,16 +48,19 @@ public class EnemySpawner : MonoBehaviour
 
     }
 
-
     private void SpawnBoss()
     {
         StopAllCoroutines();
-        enemyBoss.SetActive(true);
-        enemyBoss.GetComponent<LerpObject>().LerpObjectToPoint();
-        enemyBoss.GetComponent<BossShip>().StartBossSquence();
-
+        StartCoroutine(BossAlertDelay());
     }
 
+    IEnumerator BossAlertDelay()
+    {
+        yield return new WaitForSeconds(5f);
+        enemyBoss.SetActive(true);
+        bossAnimator.SetTrigger("BossAlert");
+        enemyBoss.GetComponent<BossShip>().LerpObjectToPoint();
+    }
 
     private Vector2 GetRandomSpawnPoint()
     {
@@ -138,8 +141,9 @@ public class EnemySpawner : MonoBehaviour
     private void OnEnable()
     {
         ShipGUI.onNewStageStart += SetNewStage;
-        ShipGameManager.onBossEncounter += SpawnBoss;
         ShipGUI.onGameStart += StartGame;
+
+        ShipGameManager.onBossEncounter += SpawnBoss;
 
     }
 

@@ -211,8 +211,6 @@ public class PlayerShipController : MonoBehaviour
         }
     }
 
-
-
     private void TakeDamage()
     {
 
@@ -226,7 +224,6 @@ public class PlayerShipController : MonoBehaviour
         }
 
     }
-
 
     IEnumerator PlayerTakeDamageEffect()
     {
@@ -254,21 +251,18 @@ public class PlayerShipController : MonoBehaviour
 
     }
 
-
-
-
     private void PlayerDeath()
     {
         destroyedSFX.Play();
         gameMusic.Stop();
         //Destroy(gameObject);
-        transform.GetChild(1).GetComponent<ParticleSystem>().Play();
+        transform.GetChild(0).GetComponent<ParticleSystem>().Play();
         GetComponent<SpriteRenderer>().enabled = false;
         GetComponent<BoxCollider2D>().enabled = false;
         move.Disable();
         fire.Disable();
         escape.Disable();
-        transform.GetChild(2).GetComponent<ParticleSystem>().Stop();
+        transform.GetChild(1).GetComponent<ParticleSystem>().Stop();
         OnPlayerRespawn?.Invoke();
     }
 

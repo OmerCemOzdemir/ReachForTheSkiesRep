@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -10,6 +11,7 @@ public class BossShip : MonoBehaviour
     [SerializeField] private float bossDamage;
     [SerializeField] private Image bossHealthBar;
     [SerializeField] private GameObject bossDiedText;
+    [SerializeField] private float lerpSpeed;
 
     [Header("Enemy Projectile: ")]
     [SerializeField] private float enemyProjectileSpeed;
@@ -22,6 +24,7 @@ public class BossShip : MonoBehaviour
     [SerializeField] private Transform enemyProjectileStartPossition_1;
     [SerializeField] private Transform enemyProjectileStartPossition_2;
     [SerializeField] private Transform enemyProjectileStartPossition_3;
+    [SerializeField] private Transform enemyProjectileStartPossition_4;
 
     private int enemyGunChange = 1;
     private GameObject playerPossiton;
@@ -29,12 +32,41 @@ public class BossShip : MonoBehaviour
     private int bossAttackSquence = 0;
     private bool bossDeath = false;
     private float totalbossHealth;
+    private LoaderManager loaderManager;
+    private int tripleShootOffSet_1 = 0;
+    private int tripleShootOffSet_2 = 0;
+
+
+    public void LerpObjectToPoint()
+    {
+        Vector3 endVector = transform.GetChild(0).position;
+        Vector3 startVector = transform.position;
+        StartCoroutine(LerpObjectCoroutine(startVector, endVector, lerpSpeed));
+        //Debug.Log("LerpStarted");
+    }
+
+
+    IEnumerator LerpObjectCoroutine(Vector3 source, Vector3 target, float overTime)
+    {
+        yield return new WaitForSeconds(10f);
+        float startTime = Time.time;
+        while (Time.time < startTime + overTime)
+        {
+            transform.position = Vector3.Lerp(source, target, (Time.time - startTime) / overTime);
+            yield return null;
+        }
+        transform.position = target;
+        StartCoroutine(BossAttackSquence(enemyProjectileRepeatTime));
+
+    }
+
 
     private void Start()
     {
         totalbossHealth = bossHealth;
         //InvokeRepeating(nameof(ShootBullets), enemyProjectileStartTime, enemyProjectileRepeatTime);
-       
+        loaderManager = FindAnyObjectByType<LoaderManager>();
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -43,7 +75,7 @@ public class BossShip : MonoBehaviour
         {
             if (bossDeath)
             {
-                SceneManager.LoadScene(3);
+                loaderManager.LoadNextLevel(3);
             }
         }
 
@@ -76,12 +108,6 @@ public class BossShip : MonoBehaviour
         }
     }
 
-    public void StartBossSquence()
-    {
-        StartCoroutine(BossAttackSquence(enemyProjectileRepeatTime));
-    }
-
-
     private void ShootBullets()
     {
         if (enemyGunChange == 1)
@@ -107,34 +133,83 @@ public class BossShip : MonoBehaviour
         }
         else
         {
-            ShootTripleProjectiles(enemyProjectileStartPossition_1);
-            ShootTripleProjectiles(enemyProjectileStartPossition_2);
+            //ShootTripleProjectiles(enemyProjectileStartPossition_3, true);
+           // ShootTripleProjectiles(enemyProjectileStartPossition_4, false);
             ShootTripleProjectiles(enemyProjectileStartPossition_3);
+            ShootTripleProjectiles(enemyProjectileStartPossition_4);
 
         }
 
 
     }
 
-    private void ShootTripleProjectiles(Transform position)
+
+    private void ShootTripleProjectiles(Transform position, bool switchGunIndex)
     {
-        GameObject newProjectile1 = Instantiate(enemyHeavyProjectilePreFab, position.position, Quaternion.identity);
-        GameObject newProjectile2 = Instantiate(enemyHeavyProjectilePreFab, position.position, Quaternion.identity);
-        GameObject newProjectile3 = Instantiate(enemyHeavyProjectilePreFab, position.position, Quaternion.identity);
+        if (switchGunIndex)
+        {
+            if (tripleShootOffSet_2 == -50)
+            {
+                tripleShootOffSet_2 = 0;
+            }
+            GameObject newProjectile1 = Instantiate(enemyHeavyProjectilePreFab, position.position, Quaternion.Euler(0, 0, tripleShootOffSet_2));
+            GameObject newProjectile2 = Instantiate(enemyHeavyProjectilePreFab, position.position, Quaternion.Euler(0, 0, 30 + tripleShootOffSet_2));
+            GameObject newProjectile3 = Instantiate(enemyHeavyProjectilePreFab, position.position, Quaternion.Euler(0, 0, -30 - tripleShootOffSet_2));
 
-        Vector3 transformDown = transform.up * -1.0f;
+            // Vector3 newOffSet = new Vector3(tripleShootOffSet_1, 0, 0);
 
-        float angleOffset = 30f; // Angle in degrees
-        Vector2 shootDirection = Quaternion.Euler(0, 0, angleOffset) * transformDown;
-        Vector2 shootDirection2 = Quaternion.Euler(0, 0, -angleOffset) * transformDown;
+            Vector3 transformDown = transform.up * -1.0f;
 
-        newProjectile1.GetComponent<Rigidbody2D>().AddForce(transformDown * enemyProjectileSpeed, ForceMode2D.Impulse);
-        newProjectile2.GetComponent<Rigidbody2D>().AddForce(shootDirection * enemyProjectileSpeed, ForceMode2D.Impulse);
-        newProjectile3.GetComponent<Rigidbody2D>().AddForce(shootDirection2 * enemyProjectileSpeed, ForceMode2D.Impulse);
+            float angleOffset = 30f + tripleShootOffSet_2; // Angle in degrees
+            Vector2 shootDirection_1 = Quaternion.Euler(0, 0, tripleShootOffSet_2) * transformDown;
+            Vector2 shootDirection_2 = Quaternion.Euler(0, 0, angleOffset ) * transformDown;
+            Vector2 shootDirection_3 = Quaternion.Euler(0, 0, -angleOffset ) * transformDown;
 
-        Destroy(newProjectile1, enemyProjectileLifeTime);
-        Destroy(newProjectile2, enemyProjectileLifeTime);
-        Destroy(newProjectile3, enemyProjectileLifeTime);
+            newProjectile1.GetComponent<Rigidbody2D>().AddForce(shootDirection_1 * enemyProjectileSpeed / 3, ForceMode2D.Impulse);
+            newProjectile2.GetComponent<Rigidbody2D>().AddForce(shootDirection_2 * enemyProjectileSpeed / 3, ForceMode2D.Impulse);
+            newProjectile3.GetComponent<Rigidbody2D>().AddForce(shootDirection_3 * enemyProjectileSpeed / 3, ForceMode2D.Impulse);
+
+
+            Destroy(newProjectile1, enemyProjectileLifeTime);
+            Destroy(newProjectile2, enemyProjectileLifeTime);
+            Destroy(newProjectile3, enemyProjectileLifeTime);
+
+            tripleShootOffSet_2 -= 5;
+
+
+        }
+        else
+        {
+            if (tripleShootOffSet_1 == 50)
+            {
+                tripleShootOffSet_1 = 0;
+            }
+            GameObject newProjectile1 = Instantiate(enemyHeavyProjectilePreFab, position.position, Quaternion.Euler(0, 0, tripleShootOffSet_1));
+            GameObject newProjectile2 = Instantiate(enemyHeavyProjectilePreFab, position.position, Quaternion.Euler(0, 0, 30 + tripleShootOffSet_1));
+            GameObject newProjectile3 = Instantiate(enemyHeavyProjectilePreFab, position.position, Quaternion.Euler(0, 0, -30 + tripleShootOffSet_1));
+
+            // Vector3 newOffSet = new Vector3(tripleShootOffSet_1, 0, 0);
+
+            Vector3 transformDown = transform.up * -1.0f;
+
+            float angleOffset = 30f + tripleShootOffSet_1; // Angle in degrees
+            Vector2 shootDirection_1 = Quaternion.Euler(0, 0, tripleShootOffSet_1) * transformDown;
+            Vector2 shootDirection_2 = Quaternion.Euler(0, 0, angleOffset ) * transformDown;
+            Vector2 shootDirection_3 = Quaternion.Euler(0, 0, -angleOffset ) * transformDown;
+
+            newProjectile1.GetComponent<Rigidbody2D>().AddForce(shootDirection_1 * enemyProjectileSpeed / 3, ForceMode2D.Impulse);
+            newProjectile2.GetComponent<Rigidbody2D>().AddForce(shootDirection_2 * enemyProjectileSpeed / 3, ForceMode2D.Impulse);
+            newProjectile3.GetComponent<Rigidbody2D>().AddForce(shootDirection_3 * enemyProjectileSpeed / 3, ForceMode2D.Impulse);
+
+
+            Destroy(newProjectile1, enemyProjectileLifeTime);
+            Destroy(newProjectile2, enemyProjectileLifeTime);
+            Destroy(newProjectile3, enemyProjectileLifeTime);
+
+            tripleShootOffSet_2 += 5;
+
+        }
+
     }
 
     private void UpdateBossHealthBar(float dmg)
@@ -152,6 +227,7 @@ public class BossShip : MonoBehaviour
         {
             bossHealth -= dmg;
             UpdateBossHealthBar(dmg);
+            StartCoroutine(BossTakeDamageEffect());
             //UnityEngine.Debug.Log("Boss Health - Total boss Health % = " );
             float bossHealthPercentage = ((bossHealth / totalbossHealth) * 100);
 
@@ -190,6 +266,27 @@ public class BossShip : MonoBehaviour
             //UnityEngine.Debug.Log("Sequence is 0 ");
 
         }
+    }
+
+    IEnumerator BossTakeDamageEffect()
+    {
+        //Physics.IgnoreLayerCollision(7, 8, true);
+        //GetComponent<BoxCollider2D>().enabled = false;
+        GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0.5f);
+        yield return new WaitForSeconds(0.1f);
+        GetComponent<SpriteRenderer>().color = Color.white;
+        yield return new WaitForSeconds(0.1f);
+        GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0.5f);
+        yield return new WaitForSeconds(0.1f);
+        GetComponent<SpriteRenderer>().color = Color.white;
+        yield return new WaitForSeconds(0.1f);
+        GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0.5f);
+        yield return new WaitForSeconds(0.1f);
+        GetComponent<SpriteRenderer>().color = Color.white;
+
+        //GetComponent<BoxCollider2D>().enabled = true;
+        //Physics.IgnoreLayerCollision(7, 8, false);
+
     }
 
     private void BossDeath()
@@ -237,6 +334,35 @@ public class BossShip : MonoBehaviour
             }
 
         }
+
+    }
+
+    private void ShootTripleProjectiles(Transform position)
+    {
+
+        GameObject newProjectile1 = Instantiate(enemyHeavyProjectilePreFab, position.position, Quaternion.Euler(0, 0, 0));
+        GameObject newProjectile2 = Instantiate(enemyHeavyProjectilePreFab, position.position, Quaternion.Euler(0, 0, 30 + tripleShootOffSet_2));
+        GameObject newProjectile3 = Instantiate(enemyHeavyProjectilePreFab, position.position, Quaternion.Euler(0, 0, -30 - tripleShootOffSet_2));
+
+        // Vector3 newOffSet = new Vector3(tripleShootOffSet_1, 0, 0);
+
+        Vector3 transformDown = transform.up * -1.0f;
+
+        float angleOffset = 30f + tripleShootOffSet_2; // Angle in degrees
+        Vector2 shootDirection_1 = transformDown;
+        Vector2 shootDirection_2 = Quaternion.Euler(0, 0, angleOffset) * transformDown;
+        Vector2 shootDirection_3 = Quaternion.Euler(0, 0, -angleOffset) * transformDown;
+
+        newProjectile1.GetComponent<Rigidbody2D>().AddForce(shootDirection_1 * enemyProjectileSpeed / 3, ForceMode2D.Impulse);
+        newProjectile2.GetComponent<Rigidbody2D>().AddForce(shootDirection_2 * enemyProjectileSpeed / 3, ForceMode2D.Impulse);
+        newProjectile3.GetComponent<Rigidbody2D>().AddForce(shootDirection_3 * enemyProjectileSpeed / 3, ForceMode2D.Impulse);
+
+
+        Destroy(newProjectile1, enemyProjectileLifeTime);
+        Destroy(newProjectile2, enemyProjectileLifeTime);
+        Destroy(newProjectile3, enemyProjectileLifeTime);
+
+        tripleShootOffSet_2 += 5;
 
     }
 
