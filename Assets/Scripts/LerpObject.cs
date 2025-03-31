@@ -6,27 +6,31 @@ public class LerpObject : MonoBehaviour
     [SerializeField] public float lerpSpeed;
     private Vector3 endVector;
     private Vector3 startVector;
-    private Vector3 endVector2;
+    private Vector3 newStartVector;
+    private Vector3 newEndVector;
+
 
     private void Start()
     {
         startVector = transform.position;
         endVector = transform.GetChild(0).position;
-        endVector2 = transform.GetChild(1).position;
-    }
 
+    }
 
     public void LerpObjectToPoint()
     {
-        StartCoroutine(LerpObjectCoroutine(startVector, endVector, lerpSpeed));
+        newStartVector = transform.position;
+        newEndVector = transform.GetChild(0).position;
+        StartCoroutine(LerpObjectCoroutine(newStartVector, newEndVector, lerpSpeed));
         //Debug.Log("LerpStarted");
     }
 
     public void LerpObjectToPoint2()
     {
-        StartCoroutine(LerpObjectCoroutine(endVector, endVector2, lerpSpeed));
-
+        StartCoroutine(LerpObjectCoroutine(startVector, endVector, lerpSpeed));
+        //Debug.Log("LerpStarted");
     }
+
 
     public void LerpObjectBack()
     {

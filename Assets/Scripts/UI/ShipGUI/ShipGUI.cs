@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -70,7 +69,7 @@ public class ShipGUI : MonoBehaviour
     {
         stageText.gameObject.GetComponent<LerpObject>().LerpObjectToPoint();
         yield return new WaitForSeconds(3f);
-        stageText.gameObject.GetComponent<LerpObject>().LerpObjectToPoint2();
+        stageText.gameObject.GetComponent<LerpObject>().LerpObjectToPoint();
         yield return new WaitForSeconds(7f);
         onGameStart?.Invoke();
     }
@@ -81,7 +80,7 @@ public class ShipGUI : MonoBehaviour
         EnemySpawner.endEnemySpawn = true;
         stageText.gameObject.GetComponent<LerpObject>().LerpObjectToPoint();
         yield return new WaitForSeconds(3f);
-        stageText.gameObject.GetComponent<LerpObject>().LerpObjectToPoint2();
+        stageText.gameObject.GetComponent<LerpObject>().LerpObjectToPoint();
         yield return new WaitForSeconds(7f);
         EnemySpawner.endEnemySpawn = false;
         onNewStageStart?.Invoke();

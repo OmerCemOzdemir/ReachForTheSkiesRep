@@ -13,7 +13,7 @@ public class DynamicDoor : MonoBehaviour
     {
         if (collision.CompareTag("PlayerCircle"))
         {
-            lerpObject.LerpObjectToPoint();
+            lerpObject.LerpObjectToPoint2();
         }
     }
     private void OnTriggerExit2D(Collider2D collision)

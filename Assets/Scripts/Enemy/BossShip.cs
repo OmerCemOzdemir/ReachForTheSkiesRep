@@ -1,8 +1,5 @@
 using System.Collections;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class BossShip : MonoBehaviour
@@ -272,15 +269,15 @@ public class BossShip : MonoBehaviour
     {
         //Physics.IgnoreLayerCollision(7, 8, true);
         //GetComponent<BoxCollider2D>().enabled = false;
-        GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0.5f);
+        GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
         yield return new WaitForSeconds(0.1f);
         GetComponent<SpriteRenderer>().color = Color.white;
         yield return new WaitForSeconds(0.1f);
-        GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0.5f);
+        GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
         yield return new WaitForSeconds(0.1f);
         GetComponent<SpriteRenderer>().color = Color.white;
         yield return new WaitForSeconds(0.1f);
-        GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0.5f);
+        GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
         yield return new WaitForSeconds(0.1f);
         GetComponent<SpriteRenderer>().color = Color.white;
 
