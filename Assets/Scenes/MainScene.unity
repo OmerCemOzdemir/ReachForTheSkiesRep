@@ -17805,7 +17805,7 @@ MonoBehaviour:
   - 50
   - 150
   - 250
-  debugStageInterval: 150
+  debugStageInterval: 0
 --- !u!1 &1472174263
 GameObject:
   m_ObjectHideFlags: 0
