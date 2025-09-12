@@ -271,8 +271,21 @@ public class PlayerShipController : MonoBehaviour
     public void PlayerRespawn()
     {
         //StartCoroutine(PlayerRespawnDelay(wait));
-
+        Debug.Log("Player Respawn");
         SaveData.instance.playerShipHealth = SaveData.instance.playerShipTotalHealth / 2;
+        if (SaveData.instance.chemicalMaterials != 0)
+        {
+            SaveData.instance.chemicalMaterials /= 2;
+        }
+        if (SaveData.instance.metalScrapMaterials != 0)
+        {
+            SaveData.instance.metalScrapMaterials /= 2;
+        }
+        if (SaveData.instance.organicMaterials != 0)
+        {
+            SaveData.instance.organicMaterials /= 2;
+        }
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
     }

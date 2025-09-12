@@ -32,7 +32,7 @@ public class RPGPauseMenuUI : MonoBehaviour
 
     private void Awake()
     {
-        RPGFightManagerCopy = GetComponent<RPGFightManager>();
+        RPGFightManagerCopy = FindAnyObjectByType<RPGFightManager>();
     }
 
     private void Start()

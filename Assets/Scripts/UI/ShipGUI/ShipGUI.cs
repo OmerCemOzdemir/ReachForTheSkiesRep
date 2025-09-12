@@ -12,6 +12,9 @@ public class ShipGUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private ShipGameManager shipGameManager;
     [SerializeField] private TextMeshProUGUI stageText;
+    [SerializeField] private TextMeshProUGUI metalText;
+    [SerializeField] private TextMeshProUGUI chemText;
+    [SerializeField] private TextMeshProUGUI bioText;
 
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private TextMeshProUGUI gameOverCountdownText;
@@ -28,6 +31,7 @@ public class ShipGUI : MonoBehaviour
     private void Update()
     {
         timerText.text = "" + (int)shipGameManager.timer;
+        UpdateMatText();
     }
 
 
@@ -37,6 +41,7 @@ public class ShipGUI : MonoBehaviour
         playerHealthBar.fillAmount = SaveData.instance.playerShipHealth / SaveData.instance.playerShipTotalHealth;
         stageTextPosition = stageText.transform.position;
         StartCoroutine(FirstStageLerp());
+        //UpdateMatText();
     }
 
     public void OpenSettings()
@@ -109,6 +114,14 @@ public class ShipGUI : MonoBehaviour
         //float dmg = (float)playerShipController.GetDamageTaken() / SaveData.instance.playerShipHealth;
         StartCoroutine(DelayExecuationOfHealthBar());
         //Debug.Log("health bar minus " + dmg);
+    }
+
+    private void UpdateMatText()
+    {
+        metalText.text = SaveData.instance.metalScrapMaterials.ToString();
+        chemText.text = SaveData.instance.chemicalMaterials.ToString();
+        bioText.text = SaveData.instance.organicMaterials.ToString();
+
     }
 
     IEnumerator DelayExecuationOfHealthBar()
