@@ -40,16 +40,15 @@ public class RPGPauseMenuUI : MonoBehaviour
         UpdatePlayerStats();
     }
 
-
     public void UpdatePlayerStats()
     {
-        playerHealthText.text = "" + SaveData.instance.playerRPGHealth + " / " + RPGFightManagerCopy.GetTotalPlayerHealth();
-        playerEnergyText.text = "" + SaveData.instance.playerRPGEnergy + " / " + RPGFightManagerCopy.GetTotalPlayerEnergy();
-        playerEnergyBar.fillAmount = SaveData.instance.playerRPGEnergy / RPGFightManagerCopy.GetTotalPlayerEnergy();
-        playerHealthBar.fillAmount = SaveData.instance.playerRPGHealth / RPGFightManagerCopy.GetTotalPlayerHealth();
+        playerHealthText.text = "" + SaveData.instance.playerRPGHealth + " / " + SaveData.instance.playerRPGTotalEnergy;
+        playerEnergyText.text = "" + SaveData.instance.playerRPGEnergy + " / " + SaveData.instance.playerRPGTotalHealth;
+        playerEnergyBar.fillAmount = SaveData.instance.playerRPGEnergy / SaveData.instance.playerRPGTotalEnergy;
+        playerHealthBar.fillAmount = SaveData.instance.playerRPGHealth / SaveData.instance.playerRPGTotalHealth;
         UpdateMaterialText();
         UpdateTexts();
-       // Debug.Log("Player Stats are updated: " + SaveData.instance.playerRPGHealth + " / " + RPGFightManagerCopy.GetTotalPlayerHealth());
+        // Debug.Log("Player Stats are updated: " + SaveData.instance.playerRPGHealth + " / " + RPGFightManagerCopy.GetTotalPlayerHealth());
     }
 
     public void UpdateMaterialText()
@@ -70,10 +69,46 @@ public class RPGPauseMenuUI : MonoBehaviour
 
     }
 
+    public void UseHealSkill(float healPercentage)
+    {
+        float hp = SaveData.instance.playerRPGHealth;
+        float mp = SaveData.instance.playerRPGEnergy;
+        float newhp = hp + ((healPercentage * hp) / 100);
+        float newEnergy = mp - (((healPercentage * hp) / 100) / 2);
+        Debug.Log("Player health: " + hp);
+        Debug.Log("Heal for : " + ((healPercentage * hp) / 100) + " Mp: " + newEnergy + " New hp: " + newhp);
+
+        if (hp == SaveData.instance.playerRPGTotalHealth)
+        {
+            InfoPanel.instance.TriggerInfoText("Health is full", Color.green);
+        }
+        else
+        {
+            if (newhp > SaveData.instance.playerRPGTotalHealth)
+            {
+                SaveData.instance.playerRPGHealth = SaveData.instance.playerRPGTotalHealth;
+                SaveData.instance.playerRPGEnergy = newEnergy;
+                Debug.Log("Player health: " + SaveData.instance.playerRPGHealth);
+            }
+            else
+            {
+                SaveData.instance.playerRPGHealth = newhp;
+                SaveData.instance.playerRPGEnergy = newEnergy;
+                Debug.Log("Player health: " + SaveData.instance.playerRPGHealth);
+            }
+        }
+        UpdatePlayerStats();
+    }
+
 
     public void OpenDebugMenu()
     {
         debugMenuRPG.SetActive(true);
+    }
+
+    public void CloseDebugMenu()
+    {
+        debugMenuRPG.SetActive(false);
     }
 
     public void OpenSettings()
@@ -94,7 +129,6 @@ public class RPGPauseMenuUI : MonoBehaviour
 
     public void OpenInventory()
     {
-
         inventoryPanel.SetActive(true);
     }
 
@@ -111,6 +145,7 @@ public class RPGPauseMenuUI : MonoBehaviour
         playerItemsPanel.SetActive(false);
 
     }
+
     private void CloseAllPanels()
     {
         shipItemsPanel.SetActive(false);

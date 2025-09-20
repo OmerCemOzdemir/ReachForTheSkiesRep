@@ -3288,7 +3288,7 @@ PrefabInstance:
     - target: {fileID: 3207371397101324832, guid: cc86ae33112fb734799ffd200f1227ac, type: 3}
       propertyPath: pauseMenuPanel
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1312560539}
     - target: {fileID: 3207371397101324832, guid: cc86ae33112fb734799ffd200f1227ac, type: 3}
       propertyPath: itemCraterPanel
       value: 
@@ -4240,6 +4240,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 02140e0072c10b947a4a2f9528b171a8, type: 3}
+--- !u!1 &1312560539 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3143438287830573084, guid: 02140e0072c10b947a4a2f9528b171a8, type: 3}
+  m_PrefabInstance: {fileID: 1312560538}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1338200740
 GameObject:
   m_ObjectHideFlags: 0

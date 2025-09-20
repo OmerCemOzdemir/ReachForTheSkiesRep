@@ -3,6 +3,7 @@ public class SaveData
 {
 
     private static SaveData _instance;
+
     public static SaveData instance
     {
         get
@@ -15,8 +16,17 @@ public class SaveData
             return _instance;
 
         }
+        set
+        {
+            _instance = value;
+        }
     }
 
+
+    public void SetGameData(SaveData newData)
+    {
+        _instance = newData;
+    }
 
     public bool newGame = true;
 
@@ -28,10 +38,14 @@ public class SaveData
     public float playerShipTotalHealth;
     public bool playerShipMultishot;
     public float playerShipFireRate;
+
     //Player RPGStats: 
     public float playerRPGHealth;
     public float playerRPGDamage;
     public float playerRPGEnergy;
+    public float playerRPGTotalHealth;
+    public float playerRPGTotalDamage;
+    public float playerRPGTotalEnergy;
     public float playerRPGHealthBooster;
     public float playerRPGDamageBooster;
     public float playerRPGEnergyBooster;

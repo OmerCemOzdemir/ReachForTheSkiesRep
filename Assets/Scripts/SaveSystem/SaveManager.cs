@@ -17,6 +17,10 @@ public class SaveManager : ScriptableObject
             }
             return _saveManager_Instance;
         }
+        set
+        {
+            saveManager_Instance = value;
+        }
 
     }
 
@@ -36,7 +40,29 @@ public class SaveManager : ScriptableObject
         SaveData saveData = new SaveData();
         saveData = JsonUtility.FromJson<SaveData>(json);
 
-        SaveData.instance.playerShipHealth = saveData.playerShipHealth;
+        SaveData.instance.SetGameData(saveData);
+
+    }
+
+    public void TestChange()
+    {
+        SaveData.instance.playerShipHealth = 100;
+        SaveData.instance.playerShipDamage = 20;
+
+    }
+
+
+    public void TestReset()
+    {
+        SaveData.instance.playerShipHealth = 0;
+        SaveData.instance.playerShipDamage = 0;
+
+    }
+
+}
+
+/*
+ *         SaveData.instance.playerShipHealth = saveData.playerShipHealth;
         SaveData.instance.playerShipDamage = saveData.playerShipDamage;
         SaveData.instance.playerShipMoveSpeed = saveData.playerShipMoveSpeed;
         SaveData.instance.playerShipProjectileSpeed = saveData.playerShipProjectileSpeed;
@@ -61,26 +87,8 @@ public class SaveManager : ScriptableObject
         SaveData.instance.gameMusicVolume = saveData.gameMusicVolume;
         SaveData.instance.gameSFXVolume = saveData.gameSFXVolume;
 
-    }
-
-    public void TestChange()
-    {
-        SaveData.instance.playerShipHealth = 100;
-        SaveData.instance.playerShipDamage = 20;
-
-    }
-
-
-    public void TestReset()
-    {
-        SaveData.instance.playerShipHealth = 0;
-        SaveData.instance.playerShipDamage = 0;
-
-    }
-
-}
-
-/*
+ * 
+ * 
 //save game
     string json = JsonUtility.ToJson(data, true);
 File.WriteAllText(Application.dataPath + "/SaveData.json", json);

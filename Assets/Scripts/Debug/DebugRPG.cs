@@ -1,9 +1,37 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DebugRPG : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI printSaveText;
+
+
+    public void SaveGame()
+    {
+        SaveManager.saveManager_Instance.SaveGame();
+    }
+
+    public void LoadGame()
+    {
+        SaveManager.saveManager_Instance.LoadGame();
+
+    }
+
+    public void ResetGame()
+    {
+        SaveData newData = new SaveData();
+        SaveData.instance.SetGameData(newData);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void DamagePlayer()
+    {
+        if (SaveData.instance.playerRPGHealth > 0)
+        {
+            SaveData.instance.playerRPGHealth -= 10;
+        }
+    }
 
     public void DebugChemicals()
     {
