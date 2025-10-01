@@ -7,19 +7,45 @@ public class AudioManager : MonoBehaviour
 {
     [SerializeField] private AudioMixer audioMixer;
     [SerializeField] private GameObject audioManager;
-    [SerializeField] private Slider masterAudioSlider;
-    [SerializeField] private Slider musicAudioSlider;
-    [SerializeField] private Slider SFXAudioSlider;
+
 
     //[SerializeField] private TextMeshProUGUI settingsText;
-    private float masterVolume;
-    private float musicVolume;
-    private float SFXVolume;
 
 
     private void Start()
     {
-        if (SaveData.instance.newGame)
+        //InvokeRepeating("TestScriptForSlider", 3, 4);
+
+        if (SceneManager.GetActiveScene().buildIndex == 3)
+        {
+            if (audioManager != null)
+            {
+                audioManager.transform.GetChild(0).GetChild(0).GetComponent<AudioSource>().Play();
+            }
+        }
+        else if (SceneManager.GetActiveScene().buildIndex == 2)
+        {
+            if (audioManager != null)
+            {
+                audioManager.transform.GetChild(0).GetChild(1).GetComponent<AudioSource>().Play();
+            }
+
+        }
+
+    }
+
+    private void TestScriptForSlider()
+    {
+        //settingsText.text = "Slider Value Reset";
+
+    }
+
+
+
+}
+
+/*
+         if (SaveData.instance.newGame)
         {
             masterVolume = 0;
             musicVolume = 0;
@@ -105,37 +131,7 @@ public class AudioManager : MonoBehaviour
 
 
 
-
-        //InvokeRepeating("TestScriptForSlider", 3, 4);
-
-        if (SceneManager.GetActiveScene().buildIndex == 3)
-        {
-            if (audioManager != null)
-            {
-                audioManager.transform.GetChild(0).GetChild(0).GetComponent<AudioSource>().Play();
-            }
-        }
-        else if (SceneManager.GetActiveScene().buildIndex == 2)
-        {
-            if (audioManager != null)
-            {
-                audioManager.transform.GetChild(0).GetChild(1).GetComponent<AudioSource>().Play();
-            }
-
-        }
-
-    }
-
-    private void TestScriptForSlider()
-    {
-        //settingsText.text = "Slider Value Reset";
-
-    }
-
-
-
-}
-
-
+ 
+ */
 // Debug.Log("Coooo");
 // audioMixer.SetFloat("Master", Mathf.Log10(10) * 20);

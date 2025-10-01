@@ -8,23 +8,23 @@ public class RepairShip : MonoBehaviour
     //[SerializeField] float requiredAmountOfChemicalPercentage;
     //I GOTTA DO MATH !! FOR NOW FOR EVERY 20 HP = 1 METAL
     [SerializeField] private Image healthBar;
+    [SerializeField] private TextMeshProUGUI healthInfo;
     [SerializeField] private TextMeshProUGUI metalScraps;
     [SerializeField] private TextMeshProUGUI chemical;
     [SerializeField] private float metalScrapHealth;
+
 
     private RPGUIControls RPGUIControls;
     private void Start()
     {
         RPGUIControls = GetComponent<RPGUIControls>();
-        healthBar.fillAmount = SaveData.instance.playerShipHealth / SaveData.instance.playerShipTotalHealth;
-        metalScraps.text = "" + SaveData.instance.metalScrapMaterials;
-        chemical.text = "" + SaveData.instance.chemicalMaterials;
-
+        UpdateInformation();
     }
 
     private void UpdateInformation()
     {
         healthBar.fillAmount = SaveData.instance.playerShipHealth / SaveData.instance.playerShipTotalHealth;
+        healthInfo.text = "" + SaveData.instance.playerShipHealth + " / " + SaveData.instance.playerShipTotalHealth;
         metalScraps.text = "" + SaveData.instance.metalScrapMaterials;
         chemical.text = "" + SaveData.instance.chemicalMaterials;
         RPGUIControls.UpdateMaterialText();

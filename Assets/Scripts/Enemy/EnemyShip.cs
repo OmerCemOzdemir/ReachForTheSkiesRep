@@ -81,13 +81,13 @@ public class EnemyShip : MonoBehaviour
     {
         baseHealth -= damageTaken;
         StartCoroutine(EnemyTakeDamageEffect());
-        if (baseHealth == 0 || baseHealth < 0)
+        if (baseHealth <= 0)
         {
             StartCoroutine(EnemyTakeDamageEffect());
             //EnemyDeath();
             //StopCoroutine(EnemyAttackSquence(2f));
             enemyAttack = false;
-            StartCoroutine(DelayOnEnemyDeath(GetComponentInChildren<ParticleSystem>().main.duration));
+            KillEnemy();
         }
         //Debug.Log("Enemy:\n damage taken:" + damageTaken + " Current Health: " + baseHealth);
 
@@ -102,6 +102,11 @@ public class EnemyShip : MonoBehaviour
         GetComponent<SpriteRenderer>().color = Color.red;
         yield return new WaitForSeconds(0.1f);
         GetComponent<SpriteRenderer>().color = Color.white;
+    }
+
+    public void KillEnemy()
+    {
+        StartCoroutine(DelayOnEnemyDeath(GetComponentInChildren<ParticleSystem>().main.duration));
     }
 
     IEnumerator DelayOnEnemyDeath(float wait)

@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
-using System.Runtime.CompilerServices;
 using TMPro;
-using UnityEditor.Overlays;
-using UnityEditor.Playables;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -21,12 +18,10 @@ public class RPGFightManager : MonoBehaviour
     [SerializeField] private GameObject itemsPanel;
     [SerializeField] private GameObject RPGBattlePanel;
     [SerializeField] private GameObject playerBlockPanel;
-    [SerializeField] private GameObject playerGuardIcon;
     [SerializeField] private GameObject RPGGameOverPanel;
     [Space(10)]
 
     [Header("RPG Battle Information: ")]
-    [SerializeField] private TextMeshProUGUI RPGGameOverCountdown;
     [SerializeField] private TextMeshProUGUI enemyType;
     [SerializeField] private TextMeshProUGUI enemyHealthText;
     [SerializeField] private TextMeshProUGUI playerHealthText;
@@ -37,6 +32,10 @@ public class RPGFightManager : MonoBehaviour
     [SerializeField] private Image enemyHealthBar;
     [SerializeField] private Image playerHealthBar;
     [SerializeField] private Image playerEnergyBar;
+    [SerializeField] private GameObject playerGuardIcon;
+    [SerializeField] private GameObject enemyChargeIcon;
+    [SerializeField] private GameObject enemyDebuffIcon;
+
     [Space(10)]
 
     [Header("RPG Battle Item Buttons: ")]
@@ -58,53 +57,41 @@ public class RPGFightManager : MonoBehaviour
     [SerializeField] private float turnTime;
     [SerializeField] private float playerHealingAbility;
     [SerializeField] private float turnDelay = 0f;
+    [Space(10)]
+
+    [Header("Energy Required Persentage %: ")]
+    [SerializeField] private float energyRequiredHeal = 20;
+    [SerializeField] private float energyRequiredDouble = 20;
+    [SerializeField] private float energyRequiredDebuff = 20;
 
     public static event Action onBattleProgress;
     public static event Action onPlayerWin;
     public static event Action onPlayerLose;
 
-    //[Header("RPG Enemy Info: ")]
-
-
-    private bool toggleSpecial = true;
-    private bool toggleItems = true;
-
-
-
-
     //----------------------------------------------------------------------
-
 
     private float enemyHealth;
     private float enemyBaseAttack;
 
     private bool isBoss = false;
-    private int enemyAttackRandomizer;
     private bool enemyDebuff = false;
+
+    private int enemyAttackRandomizer;
     private int enemyDebuffCountdown = 3;
-
-
-    private float totalPlayerHealth;
-    private float totalPlayerEnergy;
+    private int eneyChargeCountdown = 2;
     private float totalEnemyHealth;
-    private bool playerGuard;
 
+    private bool playerGuard = false;
+    private bool enemyCharge = false;
+    private bool toggleSpecial = true;
+    private bool toggleItems = true;
+    private bool continueAction = true;
 
     private RPGPlayerActions playerAction;
     private RPGEnemyActions enemyActions;
     private RPGPlayerAbilities activeAbility;
     private RPGPlayerItems activeItem;
 
-
-    public float GetTotalPlayerHealth()
-    {
-        return totalPlayerHealth;
-    }
-
-    public float GetTotalPlayerEnergy()
-    {
-        return totalPlayerEnergy;
-    }
 
     private void Start()
     {
@@ -137,24 +124,125 @@ public class RPGFightManager : MonoBehaviour
     public void PlayerAction(int action)
     {
         playerAction = (RPGPlayerActions)action;
-        StartCoroutine(TurnDelayPlayer());
-        playerBlockPanel.SetActive(true);
-        InfoPanel.instance.TriggerInfoText("Player " + playerAction.ToString(), Color.green);
-        //Debug.Log("");
-
-        if (itemsPanel.activeSelf)
+        float hp = SaveData.instance.playerRPGHealth;
+        float mp = SaveData.instance.playerRPGEnergy;
+        float totalHp = SaveData.instance.playerRPGTotalHealth;
+        float totalMp = SaveData.instance.playerRPGTotalEnergy;
+        switch (playerAction)
         {
-            Debug.Log("Close the Items panel");
-            ToggleItemsPanel();
+            case RPGPlayerActions.Attack:
+                continueAction = true;
+                break;
+            case RPGPlayerActions.Guard:
+                continueAction = true;
+                break;
+            case RPGPlayerActions.UseAbility:
+                switch (activeAbility)
+                {
+                    case RPGPlayerAbilities.Heal:
+                        if (mp <= CalculatePercentage(energyRequiredHeal, totalMp))
+                        {
+                            InfoPanel.instance.TriggerInfoText("Not Enough Energy", Color.red);
+                            continueAction = false;
+                        }
+                        else
+                        {
+                            continueAction = true;
+                            break;
+                        }
+                        break;
+                    case RPGPlayerAbilities.Double:
+                        if (mp <= CalculatePercentage(energyRequiredDouble, totalMp))
+                        {
+                            continueAction = false;
+                            InfoPanel.instance.TriggerInfoText("Not Enough Energy", Color.red);
+                        }
+                        else
+                        {
+                            continueAction = true;
+                            break;
+                        }
+                        break;
+                    case RPGPlayerAbilities.Debuff:
+                        if (mp <= CalculatePercentage(energyRequiredDebuff, totalMp))
+                        {
+                            continueAction = false;
+                            InfoPanel.instance.TriggerInfoText("Not Enough Energy", Color.red);
+                        }
+                        else
+                        {
+                            continueAction = true;
+                            break;
+                        }
+                        break;
+                }
+                break;
+            case RPGPlayerActions.UseItem:
+                switch (activeItem)
+                {
+                    case RPGPlayerItems.HealthBooster:
+                        if (SaveData.instance.playerRPGHealthBooster <= 0)
+                        {
+                            continueAction = false;
+                            InfoPanel.instance.TriggerInfoText("No Item Left", Color.red);
+                        }
+                        else
+                        {
+                            continueAction = true;
+                            break;
+                        }
+                        break;
+                    case RPGPlayerItems.EnergyBooster:
+                        if (SaveData.instance.playerRPGEnergyBooster <= 0)
+                        {
+                            continueAction = false;
+                            InfoPanel.instance.TriggerInfoText("No Item Left", Color.red);
+                        }
+                        else
+                        {
+                            continueAction = true;
+                            break;
+                        }
+                        break;
+                    case RPGPlayerItems.DamageBooster:
+                        if (SaveData.instance.playerRPGDamageBooster <= 0)
+                        {
+                            continueAction = false;
+                            InfoPanel.instance.TriggerInfoText("No Item Left", Color.red);
+                        }
+                        else
+                        {
+                            continueAction = true;
+                            break;
+                        }
+                        break;
+                }
+                break;
         }
 
-        if (specialPanel.activeSelf)
+        if (continueAction)
         {
-            Debug.Log("Close the Ability panel");
-            ToggleSpecialPanel();
-        }
+            StartCoroutine(TurnDelayPlayer());
+            playerBlockPanel.SetActive(true);
+            InfoPanel.instance.TriggerInfoText("Player " + playerAction.ToString(), Color.green);
+            //Debug.Log("");
+            enemyAttackRandomizer = UnityEngine.Random.Range(1, 5);
 
+            if (itemsPanel.activeSelf)
+            {
+                Debug.Log("Close the Items panel");
+                ToggleItemsPanel();
+            }
+
+            if (specialPanel.activeSelf)
+            {
+                Debug.Log("Close the Ability panel");
+                ToggleSpecialPanel();
+            }
+
+        }
     }
+
 
     private IEnumerator TurnDelayPlayer()
     {
@@ -164,7 +252,6 @@ public class RPGFightManager : MonoBehaviour
         PlayerTurn();
     }
 
-
     private void PlayerTurn()
     {
         switch (playerAction)
@@ -172,11 +259,11 @@ public class RPGFightManager : MonoBehaviour
             case RPGPlayerActions.Attack:
                 Debug.Log("Player Attack");
                 DamageEnemy(SaveData.instance.playerRPGDamage, 1, enemyDebuff);
-                InfoPanel.instance.TriggerInfoText("Player Attacked", Color.green);
-
+                InfoPanel.instance.TriggerInfoText("Player Attacked " + SaveData.instance.playerRPGDamage, Color.green);
                 break;
             case RPGPlayerActions.Guard:
                 playerGuard = true;
+                playerGuardIcon.SetActive(true);
                 InfoPanel.instance.TriggerInfoText("Used Guard", Color.green);
                 break;
             case RPGPlayerActions.UseAbility:
@@ -189,19 +276,50 @@ public class RPGFightManager : MonoBehaviour
                 break;
         }
         UpdateAllInformation();
-        StartCoroutine(TurnDelayEnemy());
-    }
 
+        StartCoroutine(TurnDelayEnemy());
+
+    }
 
     private IEnumerator TurnDelayEnemy()
     {
+        if (enemyAttackRandomizer >= 2)
+        {
+            enemyActions = RPGEnemyActions.Attack;
+        }
+        else
+        {
+            enemyActions = RPGEnemyActions.Charge;
+        }
+        //Debug.Log("enemyAttackRandomizer:" + enemyAttackRandomizer + " enemyActions: " + enemyActions);
+
+        if (enemyDebuffCountdown == 0 && enemyDebuff)
+        {
+            enemyDebuff = false;
+            enemyDebuffIcon.SetActive(false);
+            enemyDebuffCountdown = 3;
+        }
+        else
+        {
+            enemyDebuffCountdown--;
+        }
+
         Debug.Log("Enemy Turn Delay: " + turnDelay);
         yield return new WaitForSeconds(turnDelay);
-        EnemyTurn();
+
+        if (enemyCharge)
+        {
+            ChargeEnemy();
+            Debug.Log("Enemy is charging");
+        }
+        else
+        {
+            EnemyTurn();
+        }
         playerBlockPanel.SetActive(false);
         playerGuard = false;
+        playerGuardIcon.SetActive(false);
     }
-
 
     private void EnemyTurn()
     {
@@ -209,9 +327,10 @@ public class RPGFightManager : MonoBehaviour
         {
             case RPGEnemyActions.Attack:
                 DamagePlayer(enemyBaseAttack, 1, playerGuard);
-                InfoPanel.instance.TriggerInfoText("Enemy Attacked", Color.red);
                 break;
             case RPGEnemyActions.Charge:
+                enemyCharge = true;
+                enemyChargeIcon.SetActive(true);
                 break;
         }
 
@@ -224,6 +343,8 @@ public class RPGFightManager : MonoBehaviour
     {
         float hp = SaveData.instance.playerRPGHealth;
         Debug.Log("Player health: " + hp);
+        //Debug.Log("Damage Recieved: " + hp);
+        InfoPanel.instance.TriggerInfoText("Enemy Attacked " + dmg * mlp, Color.red);
 
         float newhp;
         if (def)
@@ -241,12 +362,14 @@ public class RPGFightManager : MonoBehaviour
         {
             Debug.Log("Player is Dead" + newhp);
             StopAllCoroutines();
-            PlayerLoses();
+            //true for gameover
+            StopRPGBattle(true);
         }
         else
         {
             SaveData.instance.playerRPGHealth = newhp;
         }
+
 
     }
 
@@ -267,7 +390,8 @@ public class RPGFightManager : MonoBehaviour
         {
             Debug.Log("Enemy is Dead");
             StopAllCoroutines();
-            PlayerWins();
+            //false for gameover
+            StopRPGBattle(false);
         }
         else
         {
@@ -275,14 +399,32 @@ public class RPGFightManager : MonoBehaviour
         }
     }
 
-    private void HealPlayer(float healPercentage)
+    private void ChargeEnemy()
+    {
+        Debug.Log("eneyChargeCountdown: " + eneyChargeCountdown);
+        if (eneyChargeCountdown == 0)
+        {
+            Debug.Log("Enemy Charge is over, Enemy Attacking");
+            DamagePlayer(enemyBaseAttack, 2, playerGuard);
+            enemyChargeIcon.SetActive(false);
+            enemyCharge = false;
+        }
+        else
+        {
+            eneyChargeCountdown--;
+        }
+    }
+
+    private void HealPlayer(float healPercentage, float energyPercentage)
     {
         float hp = SaveData.instance.playerRPGHealth;
         float mp = SaveData.instance.playerRPGEnergy;
-        float newhp = hp + ((healPercentage * hp) / 100);
-        float newEnergy = mp - (((healPercentage * hp) / 100) / 2);
-        Debug.Log("Player health: " + hp);
-        Debug.Log("Heal for : " + ((healPercentage * hp) / 100) + " Mp: " + newEnergy + " New hp: " + newhp);
+        float totalHp = SaveData.instance.playerRPGTotalHealth;
+        float totalMp = SaveData.instance.playerRPGTotalEnergy;
+        float newhp = hp + CalculatePercentage(healPercentage, totalHp);// ((healPercentage * hp) / 100);
+        float newEnergy = mp - CalculatePercentage(healPercentage, totalMp); //((energyPercentage * mp) / 100);
+        //Debug.Log("Player health: " + hp);
+        //Debug.Log("Heal for : " + ((healPercentage * hp) / 100) + " Mp: " + newEnergy + " New hp: " + newhp);
 
         if (hp == SaveData.instance.playerRPGTotalHealth)
         {
@@ -312,19 +454,32 @@ public class RPGFightManager : MonoBehaviour
 
     private void UseAbility(RPGPlayerAbilities ability)
     {
+        float mp = SaveData.instance.playerRPGEnergy;
+        float totalmp = SaveData.instance.playerRPGTotalHealth;
+        float newEnergy;
+
         switch (ability)
         {
             case RPGPlayerAbilities.Heal:
-                HealPlayer(playerHealingAbility);
+                HealPlayer(playerHealingAbility, energyRequiredHeal);
                 break;
             case RPGPlayerAbilities.Double:
+                newEnergy = mp - CalculatePercentage(energyRequiredDouble, totalmp);
+                SaveData.instance.playerRPGEnergy = newEnergy;
                 DamageEnemy(SaveData.instance.playerRPGDamage, 2, enemyDebuff);
                 break;
             case RPGPlayerAbilities.Debuff:
+                newEnergy = mp - CalculatePercentage(energyRequiredDebuff, totalmp);
+                SaveData.instance.playerRPGEnergy = newEnergy;
+                enemyDebuffIcon.SetActive(true);
                 enemyDebuff = true;
                 break;
         }
+    }
 
+    private float CalculatePercentage(float percentage, float value)
+    {
+        return (percentage * value) / 100;
     }
 
     private void UseItem(RPGPlayerItems item)
@@ -416,7 +571,6 @@ public class RPGFightManager : MonoBehaviour
         }
     }
 
-
     private void UpdateAllBars()
     {
         enemyHealthBar.fillAmount = (float)(enemyHealth / totalEnemyHealth);
@@ -489,36 +643,12 @@ public class RPGFightManager : MonoBehaviour
 
     #endregion
 
-
     private void ResetRPGFight()
     {
         enemyHealth = totalEnemyHealth;
         enemyDebuff = false;
     }
 
-    private void PlayerWins()
-    {
-        if (isBoss)
-        {
-            StopRPGBattle();
-            ResetRPGFight();
-            SceneManager.LoadScene(4);
-        }
-        else
-        {
-            StopRPGBattle();
-            ResetRPGFight();
-        }
-        battleAnimator.SetTrigger("BattlePlayerWon");
-    }
-
-    private void PlayerLoses()
-    {
-        SaveData.instance.playerRPGHealth = totalPlayerHealth;
-        StopRPGBattle();
-        battleAnimator.SetTrigger("BattlePlayerLost");
-        StartCoroutine(RPGGameOver(2));
-    }
 
     IEnumerator RPGGameOver(float wait)
     {
@@ -531,12 +661,12 @@ public class RPGFightManager : MonoBehaviour
     {
         SaveData.instance.playerRPGHealth = SaveData.instance.playerRPGTotalHealth / 2;
         SaveManager.saveManager_Instance.SaveGame();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(3);
     }
-
 
     public void StartRPGBattle(bool isBoss, float health, float dmg)
     {
+        GameObject.FindWithTag("Player").GetComponent<PlayerRPGUIControls>().DisableInputs();
         this.isBoss = isBoss;
         enemyHealth = health;
         enemyBaseAttack = dmg;
@@ -574,14 +704,38 @@ public class RPGFightManager : MonoBehaviour
         battleMusic.Play();
     }
 
-    public void StopRPGBattle()
+    public void StopRPGBattle(bool gameOver)
     {
+        GameObject.FindWithTag("Player").GetComponent<PlayerRPGUIControls>().EnableInputs();
         StartCoroutine(DelayOnBattleEnd());
         //battleAnimator.ResetTrigger("StartAnim");
         // StartCoroutine(DelayOnAnimationStop());
+        if (gameOver)
+        {
+            battleAnimator.SetTrigger("BattlePlayerLost");
+            StartCoroutine(RPGGameOver(2));
+        }
+        else
+        {
+            if (isBoss)
+            {
+                ResetRPGFight();
+                SceneManager.LoadScene(4);
+            }
+            else
+            {
+                ResetRPGFight();
+            }
+            battleAnimator.SetTrigger("BattlePlayerWon");
+
+        }
+
         normalMusic.Play();
         battleMusic.Stop();
         enemyDebuff = false;
+        enemyDebuffIcon.SetActive(false);
+        enemyCharge = false;
+        enemyChargeIcon.SetActive(false);
         enemyDebuffCountdown = 3;
         PlayerRPGUIControls.randomEnemyEncounter = false;
         CloseAllPanels();
@@ -597,21 +751,14 @@ public class RPGFightManager : MonoBehaviour
     {
 
         PlayerRPGUIControls.onRandomEncounter += StartRPGBattle;
-        onPlayerWin += PlayerWins;
-        onPlayerLose += PlayerLoses;
         RPGBoss.onBossEncounter += StartRPGBattle;
 
     }
 
     private void OnDisable()
     {
-
         PlayerRPGUIControls.onRandomEncounter -= StartRPGBattle;
-        onPlayerWin -= PlayerWins;
-        onPlayerLose -= PlayerLoses;
         RPGBoss.onBossEncounter -= StartRPGBattle;
-
-
     }
 
 }
@@ -650,11 +797,6 @@ public enum RPGEnemyActions
     Charge
 }
 
-public enum Turn
-{
-    Player,
-    Enemy
-}
 
 
 /*

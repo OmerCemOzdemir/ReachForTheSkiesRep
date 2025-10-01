@@ -174,7 +174,6 @@ public class PlayerRPGUIControls : MonoBehaviour
         craftOutlineMat.SetColor("_OutlineColor", new Color(0.1569983f, 1, 0));
         craftOutlineMat.SetColor("_OutlineColor2", new Color(0, 0.7353768f, 1));
     }
-
     private void ChangeMatNormal()
     {
         repairOutlineMat.SetColor("_OutlineColor", new Color(0, 0, 0));
@@ -264,6 +263,18 @@ public class PlayerRPGUIControls : MonoBehaviour
 
     }
 
+
+    public void EnableInputs()
+    {
+        interact.Enable();
+        escape.Enable();
+    }
+
+    public void DisableInputs()
+    {
+        interact.Disable();
+        escape.Disable();
+    }
 
     private void OnApplicationQuit()
     {

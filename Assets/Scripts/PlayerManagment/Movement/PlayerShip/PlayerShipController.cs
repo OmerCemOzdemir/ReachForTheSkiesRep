@@ -19,6 +19,8 @@ public class PlayerShipController : MonoBehaviour
     [SerializeField] private GameObject playerProjectile;
     [SerializeField] private float playerRespawnTime;
     [SerializeField] private float playerFireRate;
+    [SerializeField] public float deceleration = 10f; // how quickly to slow down
+
     [Space(10)]
 
     [SerializeField] private GameObject pauseMenuPanel;
@@ -27,6 +29,7 @@ public class PlayerShipController : MonoBehaviour
     private bool playerInvulnerability = false;
     private bool multipleProjectile = false;
     private bool toggleProjectilePosition;
+    private bool playerShooting = false;
     [SerializeField] private float playerHealth;
     [SerializeField] private float playerDamage;
     private float totalPlayerHealth;
@@ -49,10 +52,12 @@ public class PlayerShipController : MonoBehaviour
     public static event Action OnPlayerRespawn;
     public static event Action OnPlayerTakeDamage;
     public static event Action OnPlayerDeath;
+    public static event Action OnPlayerUIUpdate;
 
 
 
     private float damageTaken;
+
     private Transform currentProjectilePosition;
     public float GetPlayerHealth()
     {
@@ -111,26 +116,24 @@ public class PlayerShipController : MonoBehaviour
 
     private void OnEnable()
     {
-        move.Enable();
-        fire.Enable();
-        fire.performed += Attack;
         escape.Enable();
+        EnableControls();
+        fire.started += StartAttack;
+        fire.canceled += StopAttack;
         escape.performed += PauseGame;
-
         OnPlayerTakeDamage += TakeDamage;
         OnPlayerDeath += PlayerDeath;
     }
 
     private void OnDisable()
     {
-        move.Disable();
-        fire.Disable();
         escape.Disable();
-
+        DisableControls();
+        fire.started -= StartAttack;
+        fire.canceled -= StopAttack;
+        escape.performed -= PauseGame;
         OnPlayerTakeDamage -= TakeDamage;
         OnPlayerDeath -= PlayerDeath;
-
-
     }
 
     private void Start()
@@ -141,25 +144,50 @@ public class PlayerShipController : MonoBehaviour
     private void Move()
     {
         movementDirection = move.ReadValue<Vector2>();
-        playerRigidbody.linearVelocity = new Vector2(movementDirection.x * playerMoveSpeed, movementDirection.y * playerMoveSpeed);
+        //playerRigidbody.linearVelocity = new Vector2(movementDirection.x * playerMoveSpeed, movementDirection.y * playerMoveSpeed);
+        //Debug.Log("movementDirection: x and y :" + movementDirection.x + " / " + movementDirection.y);
+        //playerRigidbody.AddForce(movementDirection * playerMoveSpeed * Time.deltaTime);
+        playerRigidbody.AddForce(movementDirection * playerMoveSpeed * Time.deltaTime);
+
 
     }
-
 
     void Update()
     {
         Move();
+        if (playerShooting)
+        {
+            Attack();
+        }
     }
 
-    private void Attack(InputAction.CallbackContext context)
+    private void StartAttack(InputAction.CallbackContext context)
+    {
+        playerShooting = true;
+    }
+
+    private void StopAttack(InputAction.CallbackContext context)
+    {
+        playerShooting = false;
+    }
+
+    private void Attack()
     {
         if (toggleAttack)
         {
-            shootSFX.Play();
             //Smaller the playerFireRate faster player shoots //ideal 0.7
             StartCoroutine(PlayerAttackDelay(playerFireRate));
         }
 
+    }
+
+    IEnumerator PlayerAttackDelay(float wait)
+    {
+        toggleAttack = false;
+        shootSFX.Play();
+        ShootProjectile();
+        yield return new WaitForSeconds(wait);
+        toggleAttack = true;
     }
 
     private void ShootProjectile()
@@ -213,8 +241,8 @@ public class PlayerShipController : MonoBehaviour
 
     private void TakeDamage()
     {
-
         SaveData.instance.playerShipHealth -= damageTaken;
+        OnPlayerUIUpdate?.Invoke();
         StartCoroutine(PlayerTakeDamageEffect());
         Debug.Log("Player:\n Damage taken:" + damageTaken + " Current Health: " + SaveData.instance.playerShipHealth);
 
@@ -266,8 +294,6 @@ public class PlayerShipController : MonoBehaviour
         OnPlayerRespawn?.Invoke();
     }
 
-
-
     public void PlayerRespawn()
     {
         //StartCoroutine(PlayerRespawnDelay(wait));
@@ -306,16 +332,18 @@ public class PlayerShipController : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    IEnumerator PlayerAttackDelay(float wait)
+
+    private void EnableControls()
     {
-        toggleAttack = false;
-        ShootProjectile();
-        yield return new WaitForSeconds(wait);
-        toggleAttack = true;
+        move.Enable();
+        fire.Enable();
     }
 
-
-
+    private void DisableControls()
+    {
+        move.Disable();
+        fire.Disable();
+    }
 
 
     private void PauseGame(InputAction.CallbackContext context)
@@ -324,6 +352,7 @@ public class PlayerShipController : MonoBehaviour
         {
             pauseMenuPanel.SetActive(false);
             togglePauseMenu = false;
+            EnableControls();
             Time.timeScale = 1f;
 
         }
@@ -331,14 +360,11 @@ public class PlayerShipController : MonoBehaviour
         {
             pauseMenuPanel.SetActive(true);
             togglePauseMenu = true;
+            DisableControls();
             Time.timeScale = 0f;
-
         }
 
     }
-
-
-
 
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -346,7 +372,7 @@ public class PlayerShipController : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             damageTaken = collision.gameObject.GetComponent<EnemyShip>().GetEnemyDamage();
-            Destroy(collision.gameObject);
+            collision.gameObject.GetComponent<EnemyShip>().KillEnemy();
             OnPlayerTakeDamage?.Invoke();
 
         }
@@ -354,7 +380,6 @@ public class PlayerShipController : MonoBehaviour
         if (collision.gameObject.CompareTag("Boss"))
         {
             //OnPlayerDeath?.Invoke();
-
         }
 
         if (collision.gameObject.CompareTag("EnemyProjectile"))
@@ -366,9 +391,6 @@ public class PlayerShipController : MonoBehaviour
 
         }
 
-
-
-
     }
 
 
@@ -378,6 +400,35 @@ public class PlayerShipController : MonoBehaviour
 
 
 /*
+ * 
+        /*
+         *         if (movementDirection.x == 0 && movementDirection.y == 0)
+        {
+            playerRigidbody.AddForce(-movementDirection / (playerMoveSpeed * Time.deltaTime));
+        }
+        else
+        {
+            //Debug.Log("movementDirection: x and y :" + movementDirection.x + " / " + movementDirection.y);
+            playerRigidbody.AddForce(movementDirection * playerMoveSpeed * Time.deltaTime);
+        }
+         * 
+         * 
+                 if (movementDirection.x == 0 || movementDirection.y == 0)
+        {
+            playerRigidbody.linearVelocity = new Vector2(movementDirection.x * playerMoveSpeed, movementDirection.y * playerMoveSpeed);
+        }
+        else
+        {
+            Debug.Log("The Ship is in Ease in Effect");
+            // Smoothly reduce velocity to 0 (ease-in effect)
+                  playerRigidbody.linearVelocity = new Vector2(
+              Mathf.Lerp(movementDirection.x * playerMoveSpeed, 0, 0.5f * Time.deltaTime),
+              Mathf.Lerp(movementDirection.y * playerMoveSpeed, 0, 0.5f * Time.deltaTime)
+        );
+        }
+         
+         
+*
      private void FixedUpdate()
     {
         //playerRigidbody.linearVelocity = movementDirection * playerMoveSpeed * Time.deltaTime ;

@@ -65,7 +65,7 @@ public class ShipGUI : MonoBehaviour
         Application.Quit();
     }
 
-    private void UpdateStageTextPosition()
+    private void UpdateStageTextPosition(int stage)
     {
         StartCoroutine(StartStageLerp());
     }
@@ -91,18 +91,18 @@ public class ShipGUI : MonoBehaviour
         onNewStageStart?.Invoke();
     }
 
-    private void UpdateStageText()
+    private void UpdateStageText(int stage)
     {
         currentStage++;
-        switch (currentStage)
+        switch (stage)
         {
-            case 0:
+            case 1:
                 stageText.text = "Stage I";
                 break;
-            case 1:
+            case 2:
                 stageText.text = "Stage II";
                 break;
-            case 2:
+            case 3:
                 stageText.text = "Stage III";
                 break;
         }
@@ -111,8 +111,8 @@ public class ShipGUI : MonoBehaviour
 
     private void UpdatePlayerHealthBar()
     {
+        playerHealthBar.fillAmount = SaveData.instance.playerShipHealth / SaveData.instance.playerShipTotalHealth;
         //float dmg = (float)playerShipController.GetDamageTaken() / SaveData.instance.playerShipHealth;
-        StartCoroutine(DelayExecuationOfHealthBar());
         //Debug.Log("health bar minus " + dmg);
     }
 
@@ -121,13 +121,6 @@ public class ShipGUI : MonoBehaviour
         metalText.text = SaveData.instance.metalScrapMaterials.ToString();
         chemText.text = SaveData.instance.chemicalMaterials.ToString();
         bioText.text = SaveData.instance.organicMaterials.ToString();
-
-    }
-
-    IEnumerator DelayExecuationOfHealthBar()
-    {
-        yield return new WaitForSeconds(1f);
-        playerHealthBar.fillAmount = SaveData.instance.playerShipHealth / SaveData.instance.playerShipTotalHealth;
 
     }
 
@@ -154,7 +147,7 @@ public class ShipGUI : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerShipController.OnPlayerTakeDamage += UpdatePlayerHealthBar;
+        PlayerShipController.OnPlayerUIUpdate += UpdatePlayerHealthBar;
         PlayerShipController.OnPlayerRespawn += ActivateGameOverSequence;
         ShipGameManager.onStageClear += UpdateStageText;
         ShipGameManager.onStageClear += UpdateStageTextPosition;
@@ -163,7 +156,7 @@ public class ShipGUI : MonoBehaviour
 
     private void OnDisable()
     {
-        PlayerShipController.OnPlayerTakeDamage -= UpdatePlayerHealthBar;
+        PlayerShipController.OnPlayerUIUpdate -= UpdatePlayerHealthBar;
         PlayerShipController.OnPlayerRespawn -= ActivateGameOverSequence;
         ShipGameManager.onStageClear -= UpdateStageText;
         ShipGameManager.onStageClear -= UpdateStageTextPosition;
