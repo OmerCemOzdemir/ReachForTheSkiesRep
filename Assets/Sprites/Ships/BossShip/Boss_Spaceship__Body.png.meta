@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Boss_Spaceship__Body_0: -2697379525377084219
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

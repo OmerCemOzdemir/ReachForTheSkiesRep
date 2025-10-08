@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: CRTEffectMat
-  m_Shader: {fileID: -6465566751694194690, guid: 3610bc226228c924eb3dcaa9bff9a539, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 45d571a46914d7b4cbc98bc292286439, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -29,7 +29,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 6f38d6785b34cb340b7cc705931cd5d8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskTex:
@@ -45,6 +45,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_7357ecd47f044aafa3862c86298c313f_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 6f38d6785b34cb340b7cc705931cd5d8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_f02d60e90f0645b7948213d35a68e82a_Texture_1_Texture2D:
         m_Texture: {fileID: 2800000, guid: 6f38d6785b34cb340b7cc705931cd5d8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -66,20 +70,28 @@ Material:
     - _BUILTIN_QueueOffset: 0
     - _ColorMask: 15
     - _EnableExternalAlpha: 0
+    - _MeterValue: 0.5
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _Speed: 0.05
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
+    - _Steps: 25.73
     - _UIMaskSoftnessX: 1
     - _UIMaskSoftnessY: 1
     - _ZWrite: 0
     m_Colors:
     - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0, g: 0.97746325, b: 1, a: 1}
+    - _Color_1: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 0}
+    - _Color_2: {r: 0.5, g: 0.5, b: 0.5, a: 0}
+    - _End_Color: {r: 1, g: 0.7568628, b: 0, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Scale: {r: 1, g: 1, b: 0, a: 0}
+    - _Start_Color: {r: 0.24313727, g: 0, b: 0.5294118, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &1645170156512870694
@@ -94,7 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 9
+  version: 10
 --- !u!114 &4098259373435678532
 MonoBehaviour:
   m_ObjectHideFlags: 11

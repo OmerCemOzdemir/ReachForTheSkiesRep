@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Metal_Scrap_0: 1204795706071082416
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

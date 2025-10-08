@@ -210,7 +210,10 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Star beanie chairs_0: 720529031304855756
+      Star beanie chairs_1: -2065372971544831084
+      Star beanie chairs_2: 5245961448853740041
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
